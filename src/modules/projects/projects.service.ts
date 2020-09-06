@@ -4,10 +4,15 @@ import { CreateProjectDto } from './dtos/create-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
 import { DatabaseService } from '../database/database.service';
 import { EntityNames } from '../../enums/entity-names.enum';
+import { Task } from '../tasks/interfaces/task.interface';
+import { TasksService } from '../tasks/tasks.service';
 
 @Injectable()
 export class ProjectsService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly tasksService: TasksService,
+  ) {}
 
   create(data: CreateProjectDto): Project {
     return this.databaseService.save<Project>(EntityNames.Project, data);
@@ -21,15 +26,22 @@ export class ProjectsService {
     );
   }
 
-  remove(projectId: number): { project: Project; tasks: any[] } {
+  remove(projectId: number): { project: Project; tasks: Task[] } {
     const removedProject = this.databaseService.removeById<Project>(
       EntityNames.Project,
       projectId,
     );
 
-    // TODO: implement removal of related tasks
+    let tasksToRemove = [];
 
-    return { project: removedProject, tasks: [] };
+    if (removedProject) {
+      tasksToRemove = this.tasksService.getAll({ projectId });
+      tasksToRemove.forEach(taskToRemove =>
+        this.tasksService.remove(taskToRemove.id),
+      );
+    }
+
+    return { project: removedProject, tasks: tasksToRemove };
   }
 
   getAll(): Project[] {

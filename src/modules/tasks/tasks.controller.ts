@@ -6,11 +6,13 @@ import {
   Param,
   ParseIntPipe,
   Patch,
-  Post,
+  Post, Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dtos/create-task.dto';
 import { UpdateTaskDto } from './dtos/update-task.dto';
+import { TaskStatus } from './enums/task-status.enum';
+import { TaskFiltersInterface } from './interfaces/task-filters.interface';
 
 @Controller('tasks')
 export class TasksController {
@@ -30,8 +32,17 @@ export class TasksController {
   }
 
   @Get()
-  getTasks() {
-    return this.tasksService.getAll();
+  getTasks(
+    @Query('status') status: TaskStatus,
+    @Query('projectId') projectId: string | undefined,
+  ) {
+    const filters: TaskFiltersInterface = { status };
+
+    if (projectId) {
+      filters.projectId = projectId === 'null' ? null : parseInt(projectId);
+    }
+
+    return this.tasksService.getAll(filters);
   }
 
   @Delete(':taskId')

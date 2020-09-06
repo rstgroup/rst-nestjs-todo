@@ -3,6 +3,7 @@ import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dtos/create-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
 import { Project } from './interfaces/project.interface';
+import { Task } from '../tasks/interfaces/task.interface';
 
 @Controller('projects')
 export class ProjectsController {
@@ -29,7 +30,7 @@ export class ProjectsController {
   @Delete(':projectId')
   removeProject(
     @Param('projectId', ParseIntPipe) projectId: number,
-  ): { project: Project; tasks: any[] } {
+  ): { project: Project; tasks: Task[] } {
     return this.projectsService.remove(projectId);
   }
 }
