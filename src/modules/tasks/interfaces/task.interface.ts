@@ -5,8 +5,8 @@ import { Entity } from '../../../interfaces/entity.interface';
 export interface Task extends Entity {
   id: number;
   name: string;
+  status: TaskStatus;
   description?: string;
-  status?: TaskStatus;
   priority?: TaskPriority;
   projectId?: number;
 }
