@@ -1,9 +1,10 @@
 import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { DATABASE_PATH } from './modules/database/constants/database-path.constant';
+import { ProjectsModule } from './modules/projects/projects.module';
 
 @Module({
-  imports: [],
+  imports: [ProjectsModule],
   controllers: [],
   providers: [
     {

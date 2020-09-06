@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { DatabaseService } from './database.service';
 import { AppModule } from '../../app.module';
 
 @Module({
-    imports: [AppModule],
+    imports: [forwardRef(() => AppModule)],
     controllers: [],
     providers: [DatabaseService],
     exports: [DatabaseService],
