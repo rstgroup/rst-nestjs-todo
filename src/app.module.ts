@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { DATABASE_PATH } from './modules/database/constants/database-path.constant';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { TasksModule } from './modules/tasks/tasks.module';
@@ -7,9 +7,11 @@ import { IsProjectIdValidConstraint } from './modules/tasks/validators/is-projec
 import { APP_FILTER } from '@nestjs/core';
 import { ValidationExceptionFilter } from './exception-filters/validation.exception-filter';
 import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
+import { AuthenticationMiddleware } from './modules/users/middlewares/authentication.middleware';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
-  imports: [ProjectsModule, TasksModule],
+  imports: [ProjectsModule, TasksModule, UsersModule],
   controllers: [],
   providers: [
     {
@@ -28,4 +30,8 @@ import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
   ],
   exports: [DATABASE_PATH],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthenticationMiddleware).forRoutes('/**');
+  }
+}
